@@ -1,0 +1,4 @@
+<resources>
+
+    <style name="Theme.CurizmTV" parent="Theme.AppCompat.DayNight.NoActionBar" />
+</resources>
