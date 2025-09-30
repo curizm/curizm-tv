@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     
+    <!-- Exclude camera permission since we only generate QR codes, don't scan them -->
+    <uses-permission android:name="android.permission.CAMERA" tools:node="remove" />
+    
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
@@ -14,7 +17,7 @@
 
     <application
         android:allowBackup="true"
-        android:banner="@mipmap/ic_launcher"
+        android:banner="@mipmap/ic_banner"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -29,6 +32,19 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name=".QRSetupActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.CurizmTV.NoActionBar" />
+            
+        <activity
+            android:name=".VideoReceiverActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.CurizmTV.NoActionBar"
+            android:keepScreenOn="true" />
     </application>
 
 </manifest>

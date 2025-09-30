@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/gradient_background"
+    android:gravity="center"
+    android:padding="40dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="40dp">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/curizm"
+            android:layout_marginEnd="20dp"
+            android:scaleType="fitCenter" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Curizm TV"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:textColor="#FF8B72"
+                android:letterSpacing="0.05" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Setup your TV display"
+                android:textSize="16sp"
+                android:textColor="#B3FFFFFF"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Main Content Card -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/glass_card_background"
+        android:padding="40dp"
+        android:layout_marginBottom="30dp"
+        android:gravity="center">
+
+        <!-- Left Side - Connection Code -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginEnd="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enter Code"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#FF8B72"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Go to www.curizm.io/connect and use this code"
+                android:textSize="16sp"
+                android:textColor="#CCFFFFFF"
+                android:gravity="center"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Code Display Container -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/code_display_background"
+                android:padding="30dp"
+                android:gravity="center_vertical">
+
+                <!-- Timer Circle -->
+                <FrameLayout
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginEnd="24dp">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/timer_circle_background" />
+
+                    <TextView
+                        android:id="@+id/timerText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="03:00"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#FF8B72"
+                        android:fontFamily="monospace" />
+
+                </FrameLayout>
+
+                <!-- Connection Code -->
+                <TextView
+                    android:id="@+id/connectionCodeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ABCD12"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF8B72"
+                    android:letterSpacing="0.3"
+                    android:fontFamily="monospace" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Right Side - QR Code -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scan QR Code"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#FF8B72"
+                android:layout_marginBottom="24dp" />
+
+            <!-- QR Code Container -->
+            <FrameLayout
+                android:layout_width="240dp"
+                android:layout_height="240dp"
+                android:background="@drawable/qr_code_background"
+                android:padding="20dp">
+
+                <ImageView
+                    android:id="@+id/qrCodeImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="QR Code for TV setup" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Status Information -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/status_background"
+        android:padding="16dp"
+        android:gravity="center">
+
+        <View
+            android:id="@+id/statusIndicator"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@drawable/status_indicator_connecting"
+            android:layout_marginEnd="16dp" />
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Connecting..."
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</LinearLayout>

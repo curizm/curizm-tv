@@ -1,4 +1,11 @@
 <resources>
 
     <style name="Theme.CurizmTV" parent="Theme.AppCompat.DayNight.NoActionBar" />
+    
+    <style name="Theme.CurizmTV.NoActionBar" parent="Theme.CurizmTV">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>

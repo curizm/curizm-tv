@@ -19,3 +19,45 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# ExoPlayer rules
+-keep class com.google.android.exoplayer2.** { *; }
+-dontwarn com.google.android.exoplayer2.**
+
+# Socket.IO rules
+-keep class io.socket.** { *; }
+-dontwarn io.socket.**
+
+# ZXing rules
+-keep class com.google.zxing.** { *; }
+-dontwarn com.google.zxing.**
+
+# OkHttp rules
+-keep class okhttp3.** { *; }
+-dontwarn okhttp3.**
+
+# Gson rules
+-keep class com.google.gson.** { *; }
+-dontwarn com.google.gson.**
+
+# Keep native methods
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# Keep Parcelable implementations
+-keep class * implements android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
+}
+
+# Keep Serializable classes
+-keepnames class * implements java.io.Serializable
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    !static !transient <fields>;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
