@@ -1,6 +1,24 @@
 <resources>
+    <!-- Color Palette -->
+    <color name="curizm_cream">#FFFBE9</color>
+    <color name="curizm_coral">#FF5935</color>
+    <color name="curizm_forest">#3F5743</color>
+    <color name="curizm_charcoal">#352B2B</color>
+    
+    <!-- Additional colors for better contrast -->
+    <color name="curizm_cream_dark">#F5F0D9</color>
+    <color name="curizm_coral_light">#FF7A5C</color>
+    <color name="curizm_forest_light">#4F6753</color>
+    <color name="curizm_charcoal_light">#453A3A</color>
 
-    <style name="Theme.CurizmTV" parent="Theme.AppCompat.DayNight.NoActionBar" />
+    <style name="Theme.CurizmTV" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:colorPrimary">@color/curizm_coral</item>
+        <item name="android:colorPrimaryDark">@color/curizm_forest</item>
+        <item name="android:colorAccent">@color/curizm_coral</item>
+        <item name="android:windowBackground">@color/curizm_charcoal</item>
+        <item name="android:textColorPrimary">@color/curizm_cream</item>
+        <item name="android:textColorSecondary">@color/curizm_cream_dark</item>
+    </style>
     
     <style name="Theme.CurizmTV.NoActionBar" parent="Theme.CurizmTV">
         <item name="android:windowFullscreen">true</item>

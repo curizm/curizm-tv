@@ -4,8 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/gradient_background"
-    android:gravity="center"
     android:padding="40dp">
+
+    <!-- Spacer -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <!-- Header -->
     <LinearLayout
@@ -13,6 +18,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:layout_gravity="center_horizontal"
         android:layout_marginBottom="40dp">
 
         <ImageView
@@ -33,7 +39,7 @@
                 android:text="Curizm TV"
                 android:textSize="32sp"
                 android:textStyle="bold"
-                android:textColor="#FF8B72"
+                android:textColor="@color/curizm_coral"
                 android:letterSpacing="0.05" />
 
             <TextView
@@ -41,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:text="Setup your TV display"
                 android:textSize="16sp"
-                android:textColor="#B3FFFFFF"
+                android:textColor="@color/curizm_cream_dark"
                 android:layout_marginTop="4dp" />
 
         </LinearLayout>
@@ -55,7 +61,7 @@
         android:orientation="horizontal"
         android:background="@drawable/glass_card_background"
         android:padding="40dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="50dp"
         android:gravity="center">
 
         <!-- Left Side - Connection Code -->
@@ -73,7 +79,7 @@
                 android:text="Enter Code"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="#FF8B72"
+                android:textColor="@color/curizm_coral"
                 android:layout_marginBottom="8dp" />
 
             <TextView
@@ -81,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:text="Go to www.curizm.io/connect and use this code"
                 android:textSize="16sp"
-                android:textColor="#CCFFFFFF"
+                android:textColor="@color/curizm_cream"
                 android:gravity="center"
                 android:layout_marginBottom="24dp" />
 
@@ -113,7 +119,7 @@
                         android:text="03:00"
                         android:textSize="14sp"
                         android:textStyle="bold"
-                        android:textColor="#FF8B72"
+                        android:textColor="@color/curizm_coral"
                         android:fontFamily="monospace" />
 
                 </FrameLayout>
@@ -126,7 +132,7 @@
                     android:text="ABCD12"
                     android:textSize="40sp"
                     android:textStyle="bold"
-                    android:textColor="#FF8B72"
+                    android:textColor="@color/curizm_coral"
                     android:letterSpacing="0.3"
                     android:fontFamily="monospace" />
 
@@ -140,7 +146,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:layout_marginBottom="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -148,7 +155,8 @@
                 android:text="Scan QR Code"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="#FF8B72"
+                android:textColor="@color/curizm_coral"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="24dp" />
 
             <!-- QR Code Container -->
@@ -156,7 +164,7 @@
                 android:layout_width="240dp"
                 android:layout_height="240dp"
                 android:background="@drawable/qr_code_background"
-                android:padding="20dp">
+                android:padding="12dp">
 
                 <ImageView
                     android:id="@+id/qrCodeImage"
@@ -170,6 +178,12 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <!-- Spacer -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <!-- Status Information -->
     <LinearLayout
@@ -193,7 +207,7 @@
             android:layout_height="wrap_content"
             android:text="Connecting..."
             android:textSize="14sp"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/curizm_cream"
             android:textStyle="bold" />
 
     </LinearLayout>

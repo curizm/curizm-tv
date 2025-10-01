@@ -541,6 +541,21 @@ class VideoReceiverActivity : AppCompatActivity() {
                 player?.volume = videoVolume
                 android.util.Log.d("VideoReceiver", "Volume set to: $videoVolume")
                 
+                // Enable subtitles by default if captionsOn is true
+                if (captionsOn) {
+                    player?.trackSelectionParameters = player?.trackSelectionParameters!!
+                        .buildUpon()
+                        .setTrackTypeDisabled(com.google.android.exoplayer2.C.TRACK_TYPE_TEXT, false)
+                        .build()
+                    android.util.Log.d("VideoReceiver", "Subtitles enabled by default")
+                } else {
+                    player?.trackSelectionParameters = player?.trackSelectionParameters!!
+                        .buildUpon()
+                        .setTrackTypeDisabled(com.google.android.exoplayer2.C.TRACK_TYPE_TEXT, true)
+                        .build()
+                    android.util.Log.d("VideoReceiver", "Subtitles disabled")
+                }
+                
                 player?.play()
                 android.util.Log.d("VideoReceiver", "Player play() called")
                 
@@ -623,17 +638,28 @@ class VideoReceiverActivity : AppCompatActivity() {
         val value = command.opt("value")
         val startAt = command.optLong("startAt", 0)
         
+        android.util.Log.d("VideoReceiver", "Command received: action=$action, value=$value, startAt=$startAt")
+        
         when (action) {
             "PLAY" -> {
                 if (startAt > 0 && startAt > System.currentTimeMillis()) {
+                    val delay = startAt - System.currentTimeMillis()
+                    android.util.Log.d("VideoReceiver", "Scheduled PLAY in ${delay}ms")
                     handler.postDelayed({
                         player?.play()
-                    }, startAt - System.currentTimeMillis())
+                        bgmPlayer?.play()
+                        android.util.Log.d("VideoReceiver", "Scheduled PLAY executed")
+                    }, delay)
                 } else {
                     player?.play()
+                    bgmPlayer?.play()
+                    android.util.Log.d("VideoReceiver", "Immediate PLAY executed")
                 }
             }
-            "PAUSE" -> player?.pause()
+            "PAUSE" -> {
+                player?.pause()
+                bgmPlayer?.pause()
+            }
             "NEXT" -> loadAt(currentIndex + 1)
             "PREV" -> loadAt(currentIndex - 1)
             "JUMP_TO_INDEX" -> {
@@ -753,3 +779,4 @@ class VideoReceiverActivity : AppCompatActivity() {
         val order: Int
     )
 }
+
