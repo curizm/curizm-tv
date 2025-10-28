@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.trackselection.TrackSelectionOverride
 import io.socket.client.IO
 import io.socket.client.Socket
 import okhttp3.*
@@ -183,6 +184,34 @@ class VideoReceiverActivity : AppCompatActivity() {
                 handler.post {
                     binding.videoPlayer.requestLayout()
                     android.util.Log.d("VideoReceiver", "Forced layout refresh after video size change")
+                }
+            }
+            
+            override fun onTracksChanged(tracks: com.google.android.exoplayer2.Tracks) {
+                super.onTracksChanged(tracks)
+                
+                // Log available tracks for debugging
+                android.util.Log.d("VideoReceiver", "Tracks changed. Captions enabled: $captionsOn")
+                
+                if (captionsOn) {
+                    // Find any unselected subtitle tracks and force selection
+                    for (group in tracks.groups) {
+                        if (group.type == com.google.android.exoplayer2.C.TRACK_TYPE_TEXT && !group.isSelected) {
+                            android.util.Log.d("VideoReceiver", "Found unselected subtitle track, forcing selection...")
+                            
+                            // Force reload with subtitles enabled to trigger selection
+                            handler.postDelayed({
+                                if (currentIndex >= 0 && currentIndex < playlist.size) {
+                                    val item = playlist[currentIndex]
+                                    if (item.subtitle.isNotEmpty()) {
+                                        android.util.Log.d("VideoReceiver", "Auto-applying subtitles: ${item.subtitle}")
+                                        applySubtitles(item.subtitle)
+                                    }
+                                }
+                            }, 500)
+                            break
+                        }
+                    }
                 }
             }
         })
@@ -558,6 +587,14 @@ class VideoReceiverActivity : AppCompatActivity() {
                 
                 player?.play()
                 android.util.Log.d("VideoReceiver", "Player play() called")
+                
+                // Force subtitle application if captions are on
+                if (captionsOn && item.subtitle.isNotEmpty()) {
+                    handler.postDelayed({
+                        applySubtitles(item.subtitle)
+                        android.util.Log.d("VideoReceiver", "Auto-applying subtitles after playback start")
+                    }, 1000)
+                }
                 
                 // Start BGM if available
                 if (item.audio.isNotEmpty()) {
