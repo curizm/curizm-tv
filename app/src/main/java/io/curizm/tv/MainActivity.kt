@@ -71,10 +71,10 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", "Config values - wsUrl: $wsUrl, company: $companyName, secret: $secretCode")
         
         val intent = Intent(this, VideoReceiverActivity::class.java).apply {
-            putExtra("wsUrl", wsUrl)
+            putExtra("ws", wsUrl)
             putExtra("companyName", companyName)
             putExtra("secretCode", secretCode)
-            putExtra("apiUrl", apiUrl)
+            putExtra("api", apiUrl)
         }
         startActivity(intent)
     }

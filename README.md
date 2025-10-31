@@ -8,6 +8,9 @@ A native Android TV application for video exhibition playback with mobile contro
 
 ---
 
+
+AndroidTV Seller Website: https://play.google.com/console/u/0/developers/8872487054887407323/app-list
+
 ## 🎯 Overview
 
 Curizm TV는 전시회 영상을 TV에서 재생하는 네이티브 앱입니다. 모바일 기기로 QR 코드 또는 연결 코드를 스캔하여 TV를 페어링하고, WebSocket을 통해 실시간으로 제어합니다.
