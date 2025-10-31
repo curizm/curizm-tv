@@ -24,11 +24,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.net.URISyntaxException
-import java.security.cert.X509Certificate
-import javax.net.ssl.HttpsURLConnection
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
 class VideoReceiverActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVideoReceiverBinding
@@ -87,13 +82,16 @@ class VideoReceiverActivity : AppCompatActivity() {
     }
 
     private fun setupPlayer() {
-        // Optimized ExoPlayer configuration for HLS and emulator performance
+        // Keep screen on during playback
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        
+        // Optimized ExoPlayer configuration for HLS
         player = ExoPlayer.Builder(this)
             .setLoadControl(
                 com.google.android.exoplayer2.DefaultLoadControl.Builder()
                     .setBufferDurationsMs(
-                        5000,   // minBufferMs - start playback after 5s (reduced for emulator)
-                        25000,  // maxBufferMs - stop loading after 25s (reduced for emulator)
+                        5000,   // minBufferMs - start playback after 5s
+                        25000,  // maxBufferMs - stop loading after 25s
                         1000,   // bufferForPlaybackMs - minimum buffer for start
                         3000    // bufferForPlaybackAfterRebufferMs - buffer after rebuffer
                     )
@@ -105,32 +103,28 @@ class VideoReceiverActivity : AppCompatActivity() {
         binding.videoPlayer.player = player
         binding.videoPlayer.useController = false // Hide default controls for TV
         
-        // Configure PlayerView for proper video scaling and emulator optimization
-        // Using RESIZE_MODE_FIXED_HEIGHT to prevent zoom-in issues on emulator
-        binding.videoPlayer.resizeMode = com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT
+        // Configure subtitle style for proper wrapping
+        binding.videoPlayer.subtitleView?.apply {
+            setStyle(com.google.android.exoplayer2.ui.CaptionStyleCompat.DEFAULT)
+            setUserDefaultStyle()
+            setUserDefaultTextSize()
+            // Enable word wrapping for long subtitles
+            setFixedTextSize(0, 16f) // 16sp text size
+        }
+        
+        // Configure PlayerView for proper video scaling
+        // Using RESIZE_MODE_FIT to prevent zoom-in issues
+        binding.videoPlayer.resizeMode = com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
         binding.videoPlayer.setShowBuffering(com.google.android.exoplayer2.ui.PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
         
-        // Use SurfaceView for better emulator performance (less GPU intensive than TextureView)
+        // Use SurfaceView for better performance (less GPU intensive than TextureView)
         binding.videoPlayer.setUseController(false)
         
-        // Emulator-specific fixes for video scaling issues
+        // Initial layout setup
         binding.videoPlayer.post {
-            // Force layout refresh to prevent scaling issues
             binding.videoPlayer.requestLayout()
             android.util.Log.d("VideoReceiver", "PlayerView layout: ${binding.videoPlayer.width}x${binding.videoPlayer.height}")
         }
-        
-        // Periodic layout refresh for x86 emulator stability (every 5 seconds)
-        val layoutRefreshRunnable = object : Runnable {
-            override fun run() {
-                if (player?.isPlaying == true) {
-                    binding.videoPlayer.requestLayout()
-                    android.util.Log.d("VideoReceiver", "Periodic layout refresh")
-                }
-                handler.postDelayed(this, 5000)
-            }
-        }
-        handler.postDelayed(layoutRefreshRunnable, 5000)
         
         // Add logging for debugging
         android.util.Log.d("VideoReceiver", "ExoPlayer configured with optimized HLS settings")
@@ -153,6 +147,13 @@ class VideoReceiverActivity : AppCompatActivity() {
                     }
                     Player.STATE_READY -> {
                         hideBlackOverlay()
+                        // Start BGM only after video is ready to prevent audio overlap
+                        if (currentIndex >= 0 && currentIndex < playlist.size) {
+                            val item = playlist[currentIndex]
+                            if (item.audio.isNotEmpty()) {
+                                startBgmPlayback()
+                            }
+                        }
                         android.util.Log.d("VideoReceiver", "Video ready, hiding overlay")
                     }
                     Player.STATE_ENDED -> {
@@ -173,17 +174,25 @@ class VideoReceiverActivity : AppCompatActivity() {
                 }
             }
             
-            override fun onPlayerError(error: com.google.android.exoplayer2.PlaybackException) {
-                android.util.Log.e("VideoReceiver", "ExoPlayer error: ${error.message}", error)
-            }
-            
             override fun onVideoSizeChanged(videoSize: com.google.android.exoplayer2.video.VideoSize) {
                 android.util.Log.d("VideoReceiver", "Video size changed: ${videoSize.width}x${videoSize.height}")
                 
-                // Fix for emulator scaling issues
+                // Fix for network-related scaling issues - ensure consistent resize mode
                 handler.post {
+                    // Reset resize mode to prevent zoom issues
+                    binding.videoPlayer.resizeMode = com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
                     binding.videoPlayer.requestLayout()
                     android.util.Log.d("VideoReceiver", "Forced layout refresh after video size change")
+                }
+            }
+            
+            override fun onPlayerError(error: com.google.android.exoplayer2.PlaybackException) {
+                android.util.Log.e("VideoReceiver", "ExoPlayer error: ${error.message}", error)
+                
+                // Reset resize mode on error to prevent zoom issues
+                handler.post {
+                    binding.videoPlayer.resizeMode = com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
+                    binding.videoPlayer.requestLayout()
                 }
             }
             
@@ -233,6 +242,9 @@ class VideoReceiverActivity : AppCompatActivity() {
         }
         
         try {
+            // Keep screen on when BGM is playing
+            window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            
             // Bypass SSL for BGM as well
             val dataSourceFactory = DefaultHttpDataSource.Factory()
                 .setConnectTimeoutMs(10000)
@@ -253,11 +265,18 @@ class VideoReceiverActivity : AppCompatActivity() {
             bgmPlayer?.setMediaSource(mediaSource)
             bgmPlayer?.prepare()
             bgmPlayer?.volume = bgmVolume
-            bgmPlayer?.play()
-            
-            android.util.Log.d("VideoReceiver", "BGM started: $bgmUrl at volume $bgmVolume")
+            // Don't play immediately - wait for video to be ready
+            android.util.Log.d("VideoReceiver", "BGM prepared: $bgmUrl at volume $bgmVolume")
         } catch (e: Exception) {
             android.util.Log.e("VideoReceiver", "Error playing BGM: ${e.message}", e)
+        }
+    }
+    
+    private fun startBgmPlayback() {
+        // Start BGM only after video is ready
+        if (bgmPlayer?.playbackState == Player.STATE_READY) {
+            bgmPlayer?.play()
+            android.util.Log.d("VideoReceiver", "BGM playback started")
         }
     }
     
@@ -508,21 +527,6 @@ class VideoReceiverActivity : AppCompatActivity() {
             android.util.Log.d("VideoReceiver", "=== Starting video load process ===")
             
             try {
-                // Bypass SSL certificate validation for emulator
-                try {
-                    val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
-                        override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-                        override fun checkClientTrusted(certs: Array<X509Certificate>, authType: String) {}
-                        override fun checkServerTrusted(certs: Array<X509Certificate>, authType: String) {}
-                    })
-                    val sslContext = SSLContext.getInstance("SSL")
-                    sslContext.init(null, trustAllCerts, java.security.SecureRandom())
-                    HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
-                    HttpsURLConnection.setDefaultHostnameVerifier { _, _ -> true }
-                } catch (e: Exception) {
-                    android.util.Log.w("VideoReceiver", "SSL bypass failed: ${e.message}")
-                }
-                
                 // Load HLS stream with optimized configuration
                 val dataSourceFactory = DefaultHttpDataSource.Factory()
                     .setConnectTimeoutMs(10000) // 10 second connection timeout
@@ -555,7 +559,7 @@ class VideoReceiverActivity : AppCompatActivity() {
                 val mediaItem = mediaItemBuilder.build()
                 
                 val hlsMediaSource = HlsMediaSource.Factory(dataSourceFactory)
-                    .setAllowChunklessPreparation(true) // Better for emulator
+                    .setAllowChunklessPreparation(true) // Faster HLS startup
                     .createMediaSource(mediaItem)
                 
                 android.util.Log.d("VideoReceiver", "HLS MediaSource created")
@@ -596,7 +600,7 @@ class VideoReceiverActivity : AppCompatActivity() {
                     }, 1000)
                 }
                 
-                // Start BGM if available
+                // Prepare BGM if available (will start after video is ready)
                 if (item.audio.isNotEmpty()) {
                     playBgm(item.audio)
                 } else {
